@@ -27,13 +27,16 @@ function module.move(c, snap, finished_cb) --luacheck: no unused args
     c = c or capi.client.focus
 
     if not c
-        or c.fullscreen
-        or c.maximized
         or c.type == "desktop"
         or c.type == "splash"
         or c.type == "dock" then
         return
     end
+
+    c.pre_grab_maximized = c.maximized
+    c.pre_grab_fullscreen = c.fullscreen
+    c.maximized = false
+    c.fullscreen = false
 
     -- Compute the offset
     local coords = capi.mouse.coords()
@@ -50,6 +53,11 @@ function module.move(c, snap, finished_cb) --luacheck: no unused args
         snap      = snap
     })
 end
+
+mouse.resize.add_leave_callback(function(c, _, args)
+    c.maximized = c.pre_grab_maximized
+    c.fullscreen = c.pre_grab_fullscreen
+end, "mouse.move")
 
 module.dragtotag = { }
 
