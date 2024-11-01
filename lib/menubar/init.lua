@@ -511,10 +511,22 @@ function menubar.show(scr)
     -- Set position and size
     local scrgeom = scr.workarea
     local geometry = menubar.geometry
-    instance.geometry = {x = geometry.x or scrgeom.x,
-                             y = geometry.y or scrgeom.y,
-                             height = geometry.height or gmath.round(theme.get_font_height(font) * 1.5),
-                             width = (geometry.width or scrgeom.width) - border_width * 2}
+    local position = menubar.position
+    if position == "bottom" then
+        instance.geometry = {
+            x = geometry.x or scrgeom.x,
+            y = (geometry.y or scrgeom.y + scrgeom.height - gmath.round(theme.get_font_height() * 1.5)),
+            height = geometry.height or gmath.round(theme.get_font_height() * 1.5),
+            width = (geometry.width or scrgeom.width) - border_width * 2
+        }
+    else
+        instance.geometry = {
+            x = geometry.x or scrgeom.x,
+            y = geometry.y or scrgeom.y,
+            height = geometry.height or gmath.round(theme.get_font_height() * 1.5),
+            width = (geometry.width or scrgeom.width) - border_width * 2
+        }
+    end
     instance.wibox:geometry(instance.geometry)
 
     current_item = 1
